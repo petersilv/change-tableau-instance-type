@@ -1,0 +1,72 @@
+{
+  "StartAt": "stop_tsm",
+  "States": {
+
+    "stop_tsm": {
+      "Type": "Task",
+      "Next": "stop_instance",
+      "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand",
+      "Parameters": {
+        "DocumentName": "AWS-RunShellScript",
+        "InstanceIds": ["${INSTANCE_ID}"],
+        "Parameters": {
+          "commands": [
+            "echo Step Functions Start",
+            "echo Sleeping 60 seconds",
+            "sleep 60",
+            "echo Completed"
+          ]
+        },
+        "TimeoutSeconds": 300
+      }
+    },
+
+    "stop_instance": {
+      "Type": "Task",
+      "Next": "change_instance_type",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:stopInstances",
+      "Parameters": {
+        "InstanceIds": ["${INSTANCE_ID}"]
+      }
+    },
+
+    "change_instance_type": {
+      "Type": "Task",
+      "Next": "start_instance",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:modifyInstanceAttribute",
+      "Parameters": {
+        "InstanceId": "${INSTANCE_ID}",
+        "InstanceType": {"Value": "${INSTANCE_TYPE}"}
+      }
+    },
+
+    "start_instance": {
+      "Type": "Task",
+      "Next": "start_tsm",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:startInstances",
+      "Parameters": {
+        "InstanceIds": ["${INSTANCE_ID}"]
+      }
+    },
+
+    "start_tsm": {
+      "Type": "Task",
+      "End": true,
+      "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand",
+      "Parameters": {
+        "DocumentName": "AWS-RunShellScript",
+        "InstanceIds": ["${INSTANCE_ID}"],
+        "Parameters": {
+          "commands": [
+            "echo Step Functions End",
+            "echo Sleeping 60 seconds",
+            "sleep 60",
+            "echo Completed"
+          ]
+        },
+        "TimeoutSeconds": 1800
+      }
+    }
+
+  }
+}
