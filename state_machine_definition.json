@@ -4,7 +4,7 @@
 
     "stop_tsm": {
       "Type": "Task",
-      "Next": "stop_instance",
+      "Next": "wait_for_tsm_stop",
       "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand",
       "Parameters": {
         "DocumentName": "AWS-RunShellScript",
@@ -19,6 +19,12 @@
         },
         "TimeoutSeconds": 300
       }
+    },
+
+    "wait_for_tsm_stop": {
+      "Type": "Wait",
+      "Seconds": 300,
+      "Next": "stop_instance"
     },
 
     "stop_instance": {
