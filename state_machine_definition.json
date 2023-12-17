@@ -11,10 +11,7 @@
         "InstanceIds": ["${INSTANCE_ID}"],
         "Parameters": {
           "commands": [
-            "echo Step Functions Start",
-            "echo Sleeping 60 seconds",
-            "sleep 60",
-            "echo Completed"
+            "tsm stop"
           ]
         },
         "TimeoutSeconds": 300
@@ -70,10 +67,7 @@
         "InstanceIds": ["${INSTANCE_ID}"],
         "Parameters": {
           "commands": [
-            "echo Step Functions End",
-            "echo Sleeping 60 seconds",
-            "sleep 60",
-            "echo Completed"
+            "tsm start"
           ]
         },
         "TimeoutSeconds": 1800
