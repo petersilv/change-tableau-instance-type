@@ -1,3 +1,6 @@
+# Project
+wip/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -28,4 +31,4 @@ crash.log
 *.tfvars
 
 # Terraform Builds
-terraform/builds/*
+builds/*

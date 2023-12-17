@@ -29,11 +29,17 @@
 
     "stop_instance": {
       "Type": "Task",
-      "Next": "change_instance_type",
+      "Next": "wait_for_stopped",
       "Resource": "arn:aws:states:::aws-sdk:ec2:stopInstances",
       "Parameters": {
         "InstanceIds": ["${INSTANCE_ID}"]
       }
+    },
+
+    "wait_for_stopped": {
+      "Type": "Task",
+      "Next": "change_instance_type",
+      "Resource": "${LAMBDAFUNCTIONARN1}"
     },
 
     "change_instance_type": {

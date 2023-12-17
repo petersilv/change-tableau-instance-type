@@ -29,7 +29,8 @@ data "aws_iam_policy_document" "stepfunctions" {
       "ssm:SendCommand",
       "ec2:StartInstances",
       "ec2:StopInstances",
-      "ec2:ModifyInstanceAttribute"
+      "ec2:ModifyInstanceAttribute",
+      "lambda:InvokeFunction"
     ]
     resources = ["*"]
   }
@@ -44,8 +45,9 @@ resource "aws_sfn_state_machine" "state_machine" {
   definition = templatefile(
     "./state_machine_definition.json",
     {
-      INSTANCE_ID = var.instance_id
-      INSTANCE_TYPE = var.instance_type
+      INSTANCE_ID        = var.instance_id
+      INSTANCE_TYPE      = var.instance_type
+      LAMBDAFUNCTIONARN1 = module.lambda_function_1.lambda_function_arn
     }
   )
 }
