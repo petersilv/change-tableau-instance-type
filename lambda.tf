@@ -29,7 +29,8 @@ data "aws_iam_policy_document" "lambda_assume" {
 data "aws_iam_policy_document" "lambda" {
   statement {
     actions   = [
-      "ec2:DescribeInstances"
+      "ec2:DescribeInstances",
+      "ssm:DescribeInstanceInformation"
     ]
     resources = ["*"]
   }
@@ -39,10 +40,10 @@ data "aws_iam_policy_document" "lambda" {
 module "lambda_function_1" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "${local.app_name}-WaitForInstanceStopped"
+  function_name = "${local.app_name}-WaitForInstanceState"
   description   = "..."
   tags          = local.common_tags
-  handler       = "wait-for-stopped.main"
+  handler       = "wait-for-instance-state.main"
   runtime       = "python3.9"
   memory_size   = 512
   timeout       = 300
@@ -51,10 +52,5 @@ module "lambda_function_1" {
   create_role   = false
   lambda_role   = aws_iam_role.lambda.arn
 
-  source_path = "./wait-for-stopped.py"
-
-  environment_variables = {
-    INSTANCE_ID = var.instance_id
-    INSTANCE_TYPE = var.instance_type
-  }
+  source_path = "./wait-for-instance-state.py"
 }

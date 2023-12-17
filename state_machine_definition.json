@@ -36,7 +36,11 @@
     "wait_for_stopped": {
       "Type": "Task",
       "Next": "change_instance_type",
-      "Resource": "${LAMBDAFUNCTIONARN1}"
+      "Resource": "${LAMBDAFUNCTIONARN1}",
+      "Parameters": {
+        "instance_id": "${INSTANCE_ID}",
+        "state": "stopped"
+      }
     },
 
     "change_instance_type": {
@@ -51,10 +55,20 @@
 
     "start_instance": {
       "Type": "Task",
-      "Next": "start_tsm",
+      "Next": "wait_for_running",
       "Resource": "arn:aws:states:::aws-sdk:ec2:startInstances",
       "Parameters": {
         "InstanceIds": ["${INSTANCE_ID}"]
+      }
+    },
+
+    "wait_for_running": {
+      "Type": "Task",
+      "Next": "start_tsm",
+      "Resource": "${LAMBDAFUNCTIONARN1}",
+      "Parameters": {
+        "instance_id": "${INSTANCE_ID}",
+        "state": "running"
       }
     },
 
