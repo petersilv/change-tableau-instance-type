@@ -4,7 +4,10 @@ resource "aws_iam_role" "lambda" {
   tags = local.common_tags
 
   assume_role_policy  = data.aws_iam_policy_document.lambda_assume.json
-  managed_policy_arns = [aws_iam_policy.lambda.arn]
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    aws_iam_policy.lambda.arn
+  ]
 }
 
 resource "aws_iam_policy" "lambda" {
@@ -26,7 +29,7 @@ data "aws_iam_policy_document" "lambda_assume" {
 data "aws_iam_policy_document" "lambda" {
   statement {
     actions   = [
-      "ec2:DescribeInstances",
+      "ec2:DescribeInstances"
     ]
     resources = ["*"]
   }
