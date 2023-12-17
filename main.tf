@@ -25,7 +25,7 @@ variable "instance_type" {
 data "aws_caller_identity" "current" {}
 
 locals {
-  app_name = "tableau-instance-type"
+  app_name = "ChangeTableauInstanceType"
 
   aws_account_id  = data.aws_caller_identity.current.account_id
   aws_caller_arn  = data.aws_caller_identity.current.arn
