@@ -51,15 +51,3 @@ resource "aws_sfn_state_machine" "state_machine" {
     }
   )
 }
-
-resource "aws_cloudwatch_event_rule" "event_rule" {
-  name        = "${local.app_name}-RunStateMachine"
-  description = "EventBridge rule to run the state machine at 2pm on Sunday, December 15th"
-  schedule_expression = "cron(0 19 17 12 ? *)"
-}
-
-resource "aws_cloudwatch_event_target" "event_target" {
-  target_id = "${local.app_name}-RunStateMachine"
-  rule      = aws_cloudwatch_event_rule.event_rule.name
-  arn       = aws_sfn_state_machine.state_machine.arn
-}
