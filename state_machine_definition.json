@@ -11,7 +11,7 @@
         "InstanceIds": ["${INSTANCE_ID}"],
         "Parameters": {
           "commands": [
-            "tsm stop"
+            "su tsm_admin_user -lc \"tsm stop\""
           ]
         },
         "TimeoutSeconds": 300
@@ -81,7 +81,8 @@
         "InstanceIds": ["${INSTANCE_ID}"],
         "Parameters": {
           "commands": [
-            "tsm start"
+            "sleep 60",
+            "su tsm_admin_user -lc \"tsm start\""
           ]
         },
         "TimeoutSeconds": 1800
