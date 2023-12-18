@@ -9,11 +9,19 @@ terraform {
 }
 
 provider "aws" {
-  profile = "til_coreteam"
-  region  = "eu-west-2"
+  profile = var.aws_profile
+  region  = var.aws_region
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
+variable "aws_profile" {
+  type = string
+}
+
+variable "aws_region" {
+  type = string
+}
+
 variable "instance_id" {
   type = string
 }
