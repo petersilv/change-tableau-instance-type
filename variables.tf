@@ -15,6 +15,14 @@ variable "instance_type" {
   type = string
 }
 
+variable "state_machine_path" {
+  type = string
+}
+
+variable "lambda_path" {
+  type = string
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 data "aws_caller_identity" "current" {}
 

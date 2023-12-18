@@ -43,7 +43,7 @@ resource "aws_sfn_state_machine" "state_machine" {
   role_arn = aws_iam_role.stepfunctions.arn
 
   definition = templatefile(
-    "./state_machine_definition.json",
+    var.state_machine_path,
     {
       INSTANCE_ID        = var.instance_id
       INSTANCE_TYPE      = var.instance_type

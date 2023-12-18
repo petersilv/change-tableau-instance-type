@@ -52,5 +52,5 @@ module "lambda_function_1" {
   create_role   = false
   lambda_role   = aws_iam_role.lambda.arn
 
-  source_path = "./wait-for-instance-state.py"
+  source_path = var.lambda_path
 }
