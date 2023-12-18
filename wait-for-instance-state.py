@@ -14,9 +14,7 @@ def main(event, context):
         state = ec2_response['Reservations'][0]['Instances'][0]['State']['Name']
 
         ssm_response = SSM_CLIENT.describe_instance_information(Filters=[{'Key': 'InstanceIds', 'Values': [instance_id]}])
-        print(ssm_response)
         reachable = True if ssm_response['InstanceInformationList'] else False
-        print(reachable)
 
         if (desired_state == 'stopped' and state == 'stopped') \
         or (desired_state == 'running' and state == 'running' and reachable):
