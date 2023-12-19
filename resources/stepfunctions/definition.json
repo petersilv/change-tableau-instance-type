@@ -6,59 +6,78 @@
       "Type": "Task",
       "Next": "wait_for_tsm_stop",
       "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand",
+      "ResultPath": null,
       "Parameters": {
         "DocumentName": "AWS-RunShellScript",
-        "InstanceIds": ["${INSTANCE_ID}"],
+        "InstanceIds.$": "$.instance_ids",
+        "TimeoutSeconds": 300,
         "Parameters": {
           "commands": [
             "su tsm_admin_user -lc \"tsm stop\""
           ]
-        },
-        "TimeoutSeconds": 300
+        }
       }
     },
 
     "wait_for_tsm_stop": {
       "Type": "Wait",
-      "Seconds": 300,
-      "Next": "stop_instance"
+      "Next": "stop_instances",
+      "Seconds": 5
     },
 
-    "stop_instance": {
+    "stop_instances": {
       "Type": "Task",
       "Next": "wait_for_stopped",
       "Resource": "arn:aws:states:::aws-sdk:ec2:stopInstances",
+      "ResultPath": null,
       "Parameters": {
-        "InstanceIds": ["${INSTANCE_ID}"]
+        "InstanceIds.$": "$.instance_ids"
       }
     },
 
     "wait_for_stopped": {
       "Type": "Task",
-      "Next": "change_instance_type",
+      "Next": "change_instance_types",
       "Resource": "${LAMBDAFUNCTIONARN1}",
+      "ResultPath": null,
       "Parameters": {
-        "instance_id": "${INSTANCE_ID}",
+        "instance_ids.$": "$.instance_ids",
         "state": "stopped"
       }
     },
 
-    "change_instance_type": {
-      "Type": "Task",
-      "Next": "start_instance",
-      "Resource": "arn:aws:states:::aws-sdk:ec2:modifyInstanceAttribute",
-      "Parameters": {
-        "InstanceId": "${INSTANCE_ID}",
-        "InstanceType": {"Value": "${INSTANCE_TYPE}"}
+    "change_instance_types": {
+      "Type": "Map",
+      "Next": "start_instances",
+      "ItemsPath": "$.instance_ids",
+      "ItemSelector": {
+        "instance_id.$": "$$.Map.Item.Value",
+        "instance_type.$": "$.instance_type"
+      },
+      "ResultPath": null,
+      "Iterator": {
+        "StartAt": "change_instance_type",
+        "States": {
+          "change_instance_type": {
+            "Type": "Task",
+            "End": true,
+            "Resource": "arn:aws:states:::aws-sdk:ec2:modifyInstanceAttribute",
+            "Parameters": {
+              "InstanceId.$": "$.instance_id",
+              "InstanceType.$": "$.instance_type"
+            }
+          }
+        }
       }
     },
 
-    "start_instance": {
+    "start_instances": {
       "Type": "Task",
       "Next": "wait_for_running",
       "Resource": "arn:aws:states:::aws-sdk:ec2:startInstances",
+      "ResultPath": null,
       "Parameters": {
-        "InstanceIds": ["${INSTANCE_ID}"]
+        "InstanceIds.$": "$.instance_ids"
       }
     },
 
@@ -66,8 +85,9 @@
       "Type": "Task",
       "Next": "start_tsm",
       "Resource": "${LAMBDAFUNCTIONARN1}",
+      "ResultPath": null,
       "Parameters": {
-        "instance_id": "${INSTANCE_ID}",
+        "instance_ids.$": "$.instance_ids",
         "state": "running"
       }
     },
@@ -76,16 +96,17 @@
       "Type": "Task",
       "End": true,
       "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand",
+      "ResultPath": null,
       "Parameters": {
         "DocumentName": "AWS-RunShellScript",
-        "InstanceIds": ["${INSTANCE_ID}"],
+        "InstanceIds.$": "$.instance_ids",
+        "TimeoutSeconds": 1800,
         "Parameters": {
           "commands": [
             "sleep 60",
             "su tsm_admin_user -lc \"tsm start\""
           ]
-        },
-        "TimeoutSeconds": 1800
+        }
       }
     }
 

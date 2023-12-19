@@ -45,8 +45,6 @@ resource "aws_sfn_state_machine" "state_machine" {
   definition = templatefile(
     var.state_machine_path,
     {
-      INSTANCE_ID        = var.instance_id
-      INSTANCE_TYPE      = var.instance_type
       LAMBDAFUNCTIONARN1 = module.lambda_function_1.lambda_function_arn
     }
   )
