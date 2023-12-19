@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "eventbridge" {
 # ----------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_event_rule" "state_machine" {
   name        = "${local.app_name}-RunStateMachine"
-  description = "EventBridge rule to run the state machine at 7pm on Sunday, December 15th"
-  schedule_expression = "cron(0 19 17 12 ? *)"
+  description = "EventBridge rule scheduled for 1am on December 1st"
+  schedule_expression = "cron(0 1 1 12 ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "state_machine" {
@@ -43,4 +43,3 @@ resource "aws_cloudwatch_event_target" "state_machine" {
   role_arn  = aws_iam_role.eventbridge.arn
   arn       = aws_sfn_state_machine.state_machine.arn
 }
-
